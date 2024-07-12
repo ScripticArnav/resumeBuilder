@@ -1,12 +1,5 @@
 import mongoose from "mongoose";
 
-const UserAuthSchema = new Schema({
-    user_id: { type: String, required: true },
-    username: { type: String, required: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true }
-  });
-
 const userSchema = new mongoose.Schema(
   {
     name: {
