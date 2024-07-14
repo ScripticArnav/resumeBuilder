@@ -10,7 +10,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All the fields are required");
   }
 
-  const existedUser = await User.findOne(email);
+  const existedUser = await User.findOne({email});
   if (existedUser) {
     throw new ApiError(409, "User with email already exist");
   }
@@ -32,7 +32,44 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponce(200, createdUser, "User Registered Successfully"));
 });
 
+const loginUser = asyncHandler(async (req, res) => {
+  const {email, password} = req.body;
+
+  if (!password && !email) {
+    throw new ApiError(400, "Email or Password is required");
+  }
+
+  const user = await User.findOne({email})
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials");
+  }
+
+  const loggedInUser = await User.findById(user._id).select("-password")
+
+  const { accessToken } = await User.generateAccessToken(
+    user._id
+  );
+
+  return res
+  .status(200)
+  .json(new ApiResponce(
+    200,
+    {
+      user: loggedInUser,
+      accessToken
+    },
+    "User Logged In Successfully"
+  ))
+})
 
 export {
-    registerUser
+    registerUser,
+    loginUser
 }
