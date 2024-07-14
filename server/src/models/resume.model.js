@@ -51,6 +51,6 @@ const resumeSchema = new Schema({
       ref: "PositionsOfResponsibility",
     },
   ],
-});
+}, {timestamps: true});
 
 export const Resume = mongoose.model("Resume", resumeSchema);
