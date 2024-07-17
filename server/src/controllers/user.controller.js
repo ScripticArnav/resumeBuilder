@@ -45,17 +45,15 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User does not exist");
   }
 
-  const isPasswordValid = await user.isPasswordCorrect(password);
-  
+  const isPasswordValid = await user.isPasswordCorrect(password)
+  console.log(isPasswordValid);
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials");
   }
 
   const loggedInUser = await User.findById(user._id).select("-password")
 
-  const { accessToken } = await User.generateAccessToken(
-    user._id
-  );
+  const { accessToken } = await user.generateAccessToken();
 
   return res
   .status(200)
