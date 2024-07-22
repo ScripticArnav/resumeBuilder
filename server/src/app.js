@@ -17,10 +17,12 @@ app.use(express.static("publlic"));
 //import routes
 import healthcheckRoute from "./routes/healthCheck.routes.js"
 import userRoute from "./routes/user.routes.js"
+import personalinfoRoute from "./routes/personalInfo.routes.js"
 
 // routes
 app.use("/api/vi/healthcheck", healthcheckRoute)
 app.use("/api/vi/userAuth", userRoute)
+app.use("/api/vi/", personalinfoRoute)
 
 
 export default app;

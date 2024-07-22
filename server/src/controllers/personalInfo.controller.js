@@ -1,8 +1,8 @@
-import { PersonalInfo } from "../models/personalInfo.model";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponce } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/asyncHandler";
-import { uploadOnCloudinary } from "../utils/cloudinary";
+import { PersonalInfo } from "../models/personalInfo.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponce } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const postPersonalInfo = asyncHandler(async (req, res) => {
   const {
@@ -82,7 +82,7 @@ const postPersonalInfo = asyncHandler(async (req, res) => {
     codeforces: null || codeforces,
     leetcode: null || leetcode,
     atcoder: null || atcoder,
-    photo: photoUrl, // Include photo URL if uploaded
+    photo: photo, // Include photo URL if uploaded
   });
 
   const info = await PersonalInfo.findById(personalInfo._id)
