@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const projectsSchema = new Schema({
+  owner:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   name: {
     type: String,
     required: true,
@@ -21,6 +25,12 @@ const projectsSchema = new Schema({
       required: true,
     },
   ],
+  source:{
+    type: String,
+  },
+  link:{
+    type: String,
+  }
 });
 
 export const Project = mongoose.model("Project", projectsSchema);

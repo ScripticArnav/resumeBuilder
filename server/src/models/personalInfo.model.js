@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const personalInfoSchema = new Schema({
+  owner:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   firstname: { 
     type: String, 
     required: true 

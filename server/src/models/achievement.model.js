@@ -1,9 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
 const achievementsSchema = new Schema({
+  owner:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   achievement: {
-    type: Array,
-    default: []
+    type: string,
   },
 });
 

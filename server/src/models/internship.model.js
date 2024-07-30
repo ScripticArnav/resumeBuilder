@@ -2,6 +2,10 @@ import { Schema } from "mongoose";
 import mongoose from "mongoose";
 
 const internshipSchema = new Schema({
+  owner:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   company: {
     type: String,
     required: true,

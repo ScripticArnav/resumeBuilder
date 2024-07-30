@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const positionsOfResponsibilitySchema = new Schema({
+  owner:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   organization: {
     type: String,
     required: true,

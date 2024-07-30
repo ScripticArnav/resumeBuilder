@@ -24,26 +24,28 @@ const resumeSchema = new Schema(
         ref: "Project",
       },
     ],
-    coursework_skills_id: [
+    coursework_skills_id: {
+      type: Schema.Types.ObjectId,
+      ref: "CourseworkSkill",
+    },
+    internship_id: [
       {
         type: Schema.Types.ObjectId,
-        ref: "CourseworkSkill",
+        ref: "Internship",
       },
     ],
-    internship_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Internship",
-    },
     technical_skills_id: [
       {
         type: Schema.Types.ObjectId,
         ref: "TechnicalSkill",
       },
     ],
-    achievements_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Achievement",
-    },
+    achievements_id: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Achievement",
+      },
+    ],
     positions_of_responsibility_id: [
       {
         type: Schema.Types.ObjectId,

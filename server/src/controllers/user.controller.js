@@ -10,7 +10,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All the fields are required");
   }
 
-  const existedUser = await User.findOne({email});
+  const existedUser = await User.findOne({ email });
   if (existedUser) {
     throw new ApiError(409, "User with email already exist");
   }
@@ -33,41 +33,69 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   if (!password && !email) {
     throw new ApiError(400, "Email or Password is required");
   }
 
-  const user = await User.findOne({email})
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new ApiError(404, "User does not exist");
   }
 
-  const isPasswordValid = await user.isPasswordCorrect(password)
+  const isPasswordValid = await user.isPasswordCorrect(password);
   console.log(isPasswordValid);
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials");
   }
 
-  const loggedInUser = await User.findById(user._id).select("-password")
+  const loggedInUser = await User.findById(user._id).select("-password");
 
   const { accessToken } = await user.generateAccessToken();
 
-  return res
-  .status(200)
-  .json(new ApiResponce(
-    200,
-    {
-      user: loggedInUser,
-      accessToken
-    },
-    "User Logged In Successfully"
-  ))
-})
+  return res.status(200).json(
+    new ApiResponce(
+      200,
+      {
+        user: loggedInUser,
+        accessToken,
+      },
+      "User Logged In Successfully"
+    )
+  );
+});
 
-export {
-    registerUser,
-    loginUser
-}
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User Logged Out"));
+});
+
+const currentUser = asyncHandler(async (req, res) => {
+  return req
+    .status(200)
+    .json(new ApiResponce(200, req.user, "Current User fetched Successfully"));
+});
+
+export { registerUser, loginUser, logoutUser, currentUser };
