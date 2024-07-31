@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const technicalSkillsSchema = new Schema({
-  owner:{
+  owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
@@ -9,10 +9,12 @@ const technicalSkillsSchema = new Schema({
     type: String,
     required: true,
   },
-  skill: {
-    type: String,
-    required: true,
-  },
+  skill: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
 });
 
 export const TechnicalSkill = mongoose.model(

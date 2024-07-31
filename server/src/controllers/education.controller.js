@@ -1,7 +1,17 @@
-import Education from '../models/educationModel.js';
+import { Education } from "../models/educationModel.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponce } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-// Create a new education entry
-export const createEducation = async (req, res) => {
+// Helper function to validate MM-YYYY format
+const isValidMonthYear = (date) => {
+  const regex = /^(0[1-9]|1[0-2])-\d{4}$/;
+  return regex.test(date);
+};
+
+// Create Education
+const createEducation = asyncHandler(async (req, res) => {
+  const student = req.user._id;
   const {
     institution,
     degree,
@@ -12,12 +22,89 @@ export const createEducation = async (req, res) => {
     percentage,
     location,
   } = req.body;
-  
-  const student = req.user._id;  // Assuming you have user authentication middleware that sets req.user
 
-  try {
-    const newEducation = new Education({
-      student,
+  if (!isValidMonthYear(start_year) || !isValidMonthYear(end_year)) {
+    throw new ApiError(400, "Invalid date format. Use MM-YYYY.");
+  }
+
+  const newEducation = await Education.create({
+    student,
+    institution,
+    degree,
+    field_of_study,
+    start_year,
+    end_year,
+    cgpa,
+    percentage,
+    location,
+  });
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponce(201, newEducation, "Education created successfully")
+    );
+});
+
+// Get All Educations
+const getEducations = asyncHandler(async (req, res) => {
+  const educations = await Education.find().populate('student');
+  return res
+    .status(200)
+    .json(
+      new ApiResponce(200, educations, "Educations fetched successfully")
+    );
+});
+
+// Get Education By ID
+const getEducationById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const education = await Education.findById(id).populate('student');
+  if (!education) {
+    throw new ApiError(404, "Education not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponce(200, education, "Education fetched successfully")
+    );
+});
+
+// Get Education By Student
+const getEducationByStudent = asyncHandler(async (req, res) => {
+  const studentId = req.user._id;
+
+  const educations = await Education.find({ student: studentId }).populate('student');
+  return res
+    .status(200)
+    .json(
+      new ApiResponce(200, educations, "Educations fetched successfully")
+    );
+});
+
+// Update Education
+const updateEducation = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const {
+    institution,
+    degree,
+    field_of_study,
+    start_year,
+    end_year,
+    cgpa,
+    percentage,
+    location,
+  } = req.body;
+
+  if ((start_year && !isValidMonthYear(start_year)) || (end_year && !isValidMonthYear(end_year))) {
+    throw new ApiError(400, "Invalid date format. Use MM-YYYY.");
+  }
+
+  const updatedEducation = await Education.findByIdAndUpdate(
+    id,
+    {
       institution,
       degree,
       field_of_study,
@@ -26,90 +113,43 @@ export const createEducation = async (req, res) => {
       cgpa,
       percentage,
       location,
-    });
+    },
+    { new: true }
+  );
 
-    await newEducation.save();
-    res.status(201).json(newEducation);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+  if (!updatedEducation) {
+    throw new ApiError(404, "Education not found");
   }
-};
 
-// Get all education entries
-export const getEducations = async (req, res) => {
-  try {
-    const educations = await Education.find().populate('student');
-    res.status(200).json(educations);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Get education entries by student ID
-export const getEducationByStudent = async (req, res) => {
-  const studentId = req.user._id;  // Assuming you have user authentication middleware that sets req.user
-
-  try {
-    const educations = await Education.find({ student: studentId }).populate('student');
-    res.status(200).json(educations);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Update an education entry
-export const updateEducation = async (req, res) => {
-  const { id } = req.params;
-  const {
-    institution,
-    degree,
-    field_of_study,
-    start_year,
-    end_year,
-    cgpa,
-    percentage,
-    location,
-  } = req.body;
-
-  try {
-    const updatedEducation = await Education.findByIdAndUpdate(
-      id,
-      {
-        institution,
-        degree,
-        field_of_study,
-        start_year,
-        end_year,
-        cgpa,
-        percentage,
-        location,
-      },
-      { new: true }
+  return res
+    .status(200)
+    .json(
+      new ApiResponce(200, updatedEducation, "Education updated successfully")
     );
+});
 
-    if (!updatedEducation) {
-      return res.status(404).json({ message: 'Education entry not found' });
-    }
-
-    res.status(200).json(updatedEducation);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Delete an education entry
-export const deleteEducation = async (req, res) => {
+// Delete Education
+const deleteEducation = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  try {
-    const deletedEducation = await Education.findByIdAndDelete(id);
+  const deletedEducation = await Education.findByIdAndDelete(id);
 
-    if (!deletedEducation) {
-      return res.status(404).json({ message: 'Education entry not found' });
-    }
-
-    res.status(200).json({ message: 'Education entry deleted successfully' });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+  if (!deletedEducation) {
+    throw new ApiError(404, "Education not found");
   }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponce(200, deletedEducation, "Education deleted successfully")
+    );
+});
+
+export {
+  createEducation,
+  getEducations,
+  getEducationById,
+  getEducationByStudent,
+  updateEducation,
+  deleteEducation,
 };
