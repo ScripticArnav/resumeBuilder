@@ -1,11 +1,9 @@
-import Page from "./page";
+
+import Hero from "./Page/Hero";
 function App() {
   return (
     <>
-      <h1 className="text-white font-serif font-bold size-3/4">
-        Resume Builder
-      </h1>
-      <Page />
+      <Hero />
     </>
   );
 }
