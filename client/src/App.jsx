@@ -1,9 +1,10 @@
 
-import Hero from "./Page/Hero";
+import HeaderHero from "./Page/HeaderHero.jsx";
 function App() {
   return (
     <>
-      <Hero />
+    
+      <HeaderHero/>
     </>
   );
 }
