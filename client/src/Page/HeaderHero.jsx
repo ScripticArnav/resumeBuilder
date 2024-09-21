@@ -147,7 +147,7 @@ export default function HeaderHeroFooter() {
                     Sign up
                   </a>
                   <p className="mt-6 text-center text-base font-medium text-white">
-                    Existing customer?{' '}
+                    Existing User?{' '}
                     <a href="/login" className="text-indigo-400 hover:text-yellow-300 transition-colors duration-300">
                       Sign in
                     </a>
