@@ -127,7 +127,7 @@ export default function HeaderHeroFooter() {
                       href="/services"
                       className="-m-3 p-3 flex items-center rounded-md hover:bg-gray-700 transition-colors duration-300"
                     >
-                      <span className="ml-3 text-base font-medium text-white">Services</span>
+                      <span className="ml-3 text-base font-medium text-white">Guides</span>
                     </a>
                     <a
                       href="/contact"
